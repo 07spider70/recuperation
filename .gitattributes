@@ -1,2 +1,4 @@
-data/scraper-shmu-observations.csv filter=lfs diff=lfs merge=lfs -text
+data/* filter=lfs diff=lfs merge=lfs -text
+data filter=lfs diff=lfs merge=lfs -text
+data/*.* filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
