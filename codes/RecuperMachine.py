@@ -83,13 +83,13 @@ class RecuperMachine:
         air_out_ex_per_min = 0.0166666667*air_flow_out
         
         #teplota vtlacaneho vzduchu
-        air_temp_in = efficienty*(temp_in + temp_out)
+        air_temp_in = temp_in + efficienty*(temp_out - temp_in)/2
         
         #objem vtlaceneho a vytlaceneho vzduchu sa musi rovnat
         if (vol_room == (vol_room - air_flow_out + air_flow_in)):
             #ak sa rovna pokracujeme
             vol_of_temp_in = vol_room - air_out_ex_per_min #objem vzduchu ktory nam ostane pri odsani
-            t_room = (vol_of_temp_in * temp_in + air_in_ex_per_min*air_temp_in)/(vol_of_temp_in + air_in_ex_per_min)
+            t_room = (vol_of_temp_in * temp_in + air_in_ex_per_min*air_temp_in)/(vol_room)
             #https://www.engineeringtoolbox.com/mixing-humid-air-d_694.html
             #miesanie plynov
             return t_room
