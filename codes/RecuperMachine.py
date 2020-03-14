@@ -80,7 +80,7 @@ class RecuperMachine:
         res = self.rel_hum(self.temp_in, val)
         
         temp_room = self.room_chg_aft_ex(self.air_volume, air_flow
-                            , air_flow, self.temp_in, self.temp_out, 0.7)
+                            , air_flow, self.temp_in, self.temp_out, 0)
         
         
         return (res, temp_room)

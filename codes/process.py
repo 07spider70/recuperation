@@ -129,7 +129,7 @@ def process_month_extern_data(start_point = 1, air_flow = 100):
     count_hours = 0
 
     
-    for i in range(start_point, start_point+(60*24)):
+    for i in range(start_point, start_point+(60*24*30)):
         
         if(i%60==0):
             count_hours += 1
@@ -181,7 +181,7 @@ def process_year_extern_data(start_point = 1, air_flow = 100):
             #print(f"Time: {count_hours} \t HUM out: {data_list[count_hours][0]} TEMP out: {data_list[count_hours][2]}")
         #temp_outside, hum_outside, temp_inside, hum_inside, air_flow, err_of usr
         inside_rh = rec.process(data_list[count_hours][2]
-                    , data_list[count_hours][0], 22, inside_rh, air_flow, err_daily)
+                    , data_list[count_hours][0], 25, inside_rh, air_flow, err_daily)
         log_data.add(i, inside_rh)
         
         
