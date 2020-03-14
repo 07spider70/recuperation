@@ -123,17 +123,18 @@ def process_month_extern_data(start_point = 1, air_flow = 100):
     #setting plant into 400m3 house, 70% humidity returning by heat exchanger, 1min time step for computing
     rec.setter(400, 0.7, 1.0)
 
-    #starting relative indoor hummidity inside
-    inside_rh = (50.0,25)
+    #starting relative indoor hummidity and tempeature inside
+    inside_rh = (50.0,20)
 
     count_hours = 0
 
+    
     for i in range(start_point, start_point+(60*24)):
         
         if(i%60==0):
             count_hours += 1
             #vypisanie pomocnych udajov
-            print(f"Time: {count_hours} \t HUM out: {data_list[count_hours][0]} TEMP out: {data_list[count_hours][2]} TEMP IN: {inside_rh[1]}")
+            print(f"Time: {count_hours} HUM out: {data_list[count_hours][0]} TEMP out: {data_list[count_hours][2]} TEMP IN: {inside_rh[1]}")
         #temp_outside, hum_outside, temp_inside, hum_inside, air_flow, err_of usr
         inside_rh = rec.process(data_list[count_hours][2]
                     , data_list[count_hours][0], inside_rh[1], inside_rh[0], air_flow, err_daily)
@@ -143,7 +144,7 @@ def process_month_extern_data(start_point = 1, air_flow = 100):
     
 
     print("Final Relative Hummidity: %2.4f\nFinal Temp Room: %2.4f" % (inside_rh[0], inside_rh[1]))
-    
+    print(f"Ventilation rate: {rec.vrpm} L/min")
 
     log_data.save()
 

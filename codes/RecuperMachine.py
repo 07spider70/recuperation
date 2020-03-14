@@ -17,12 +17,44 @@ class RecuperMachine:
         self.sample_min = step
         
         
+        self.vrpm = 0
+        
+        #constants for co2 gain
+        
+        #normal pressure
+        self.pressure = 105
+        #burn temp of glucose
+        self.hsp = 2.8158*10**9
+        #gas constant
+        self.r = 8314
+        #energetic outgo
+        self.E = 2.083
+        
+        #constants for ventilation
+        
+        #inside wanted co2 ppmv
+        self.xp = 700        
+        #outside co2 ppmv
+        self.x0 = 400
+        
+        
     #set air_volume, enth_ratio and step for recuperation    
     def setter(self, air_volume, enthalpy_ratio, step):
         self.air_volume = air_volume
         self.enthalphy_ratio = enthalpy_ratio
         self.sample_min = step
         
+        
+    def setter_of_co2_gain(self, pressure = 105, hsp = 2.8158*10**9,
+                           r = 8314, E = 2.083):
+        self.pressure = pressure
+        self.hsp = hsp
+        self.r = r
+        self.E = E
+        
+    def setter_of_ventilation(self, xp = 700, x0 = 400):
+        self.xp = xp
+        self.x0 = x0
     #process of recuperation
     #return relativ humidity
 
@@ -78,12 +110,31 @@ class RecuperMachine:
     
     def room_chg_aft_ex(self, vol_room = 100, air_flow_in = 100
                             , air_flow_out = 100, temp_in = 20, temp_out = 0, efficienty = 0.7):
+        
+        
+        #kolko litrov treba vyvetrat za minutu
+        #experimentalne, nefunguje!
+        
+        ad = self.get_ad(1.92,90)
+        gen_r = self.co2_generation_rate(ad)
+        np = self.np(gen_r)
+        vrps = self.ventilation_rate_per_s(np, 60)
+        self.vrpm = self.ventilation_rate_per_minute(vrps)
+        
+        #print(f"Za minutu treba vyvetrat {vrpm} L/min")
+        
+        
         #objem vzduchu za jednu minutu, predpoklad vstup == vystup
         air_in_ex_per_min = 0.0166666667*air_flow_in
         air_out_ex_per_min = 0.0166666667*air_flow_out
         
         #teplota vtlacaneho vzduchu
         air_temp_in = temp_in + efficienty*(temp_out - temp_in)/2
+        
+        
+        
+        
+        
         
         #objem vtlaceneho a vytlaceneho vzduchu sa musi rovnat
         if (vol_room == (vol_room - air_flow_out + air_flow_in)):
@@ -99,9 +150,37 @@ class RecuperMachine:
             return
         
         
+    #experiment na zistenie kolko treba vetrat
+    
+    #https://www.epa.gov/sites/production/files/2017-06/documents/co2-generate-ciaq-7june2017_draft1.pdf page 7
+    def get_ad(self, height, weight):
+        return 0.203*height**(0.725)*weight**(0.425)
+        
+    def co2_generation_rate(self,ad):
+        return (0.00276*ad*58*0.85)/(0.23*0.85+0.77)
+    
+    
+    #http://www.scienceasia.org/2001.27.n4/v27_279_284.pdf 
+    def np(self, gen_rate):
+        return gen_rate/0.3
+    
+    def ventilation_rate_per_s(self, np, volume, diversity = 1):
+        return 3*np*diversity + 0.35*volume
+    
+    def ventilation_rate_per_minute(self,ventil_rate_per_s):
+        return ventil_rate_per_s*60
+    
+    
     
     #generate equal "a" parameters into interval <-1, 0, 1>
 	#pom func for abs hum func
+    
+    def __calvin_from_celsius(self, temp):
+        return temp + 273.15
+    
+    def __celsius_from_calvin(self, calvin):
+        return calvin - 273.15
+        
     
     def __get_pws_water(self, temperature):
         exp_nnt = (7.591386 * temperature)/(temperature+240.7263)
