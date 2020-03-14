@@ -25,7 +25,7 @@ class RecuperMachine:
         
     #process of recuperation
     #return relativ humidity
-
+    #TODO vyriesit vlhobu a zmenu tepla v zavislosti od poctu osob
     def process(self, to, ho, ti, hi, air_flow, err_usr):
         """
         @PAM temp_outside, hum_outside, temp_inside, hum_inside, air_flow, err_of usr
